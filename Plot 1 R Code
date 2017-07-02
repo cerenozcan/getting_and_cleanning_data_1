@@ -1,0 +1,16 @@
+household_power_consumption <- read.csv("~/household_power_consumption.txt", sep=";")
+k<-household_power_consumption
+k <- read.table("household_power_consumption.txt", header=TRUE, sep=";", na.strings = "?", colClasses = c('character','character','numeric','numeric','numeric','numeric','numeric','numeric','numeric'))
+k$Date<-as.Date(k$Date,"%d/%m/%Y")
+k<-subset(k,Date>=("2007-2-1") & Date<=("2007-2-2"))
+k<-k[complete.cases(k),]
+dateTime<-paste(k$Date,k$Time)
+dateTime<-setNames(dateTime,"DateTime")
+k<-k[,!(names(k) %in% c("Date","Time"))]
+k<-cbind(dateTime,k)
+k$dateTime<-as.POSIXct(dateTime)
+
+#PLOT 1
+hist(k$Global_active_power, main="Global Active Power", xlab="Global Active Power (kilowatts)",col="red")
+dev.copy(png,"plot1.png",width=480, height=480)
+dev.off()
