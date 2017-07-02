@@ -1,0 +1,24 @@
+household_power_consumption <- read.csv("~/household_power_consumption.txt", sep=";")
+k<-household_power_consumption
+k <- read.table("household_power_consumption.txt", header=TRUE, sep=";", na.strings = "?", colClasses = c('character','character','numeric','numeric','numeric','numeric','numeric','numeric','numeric'))
+k$Date<-as.Date(k$Date,"%d/%m/%Y")
+k<-subset(k,Date>=("2007-2-1") & Date<=("2007-2-2"))
+k<-k[complete.cases(k),]
+dateTime<-paste(k$Date,k$Time)
+dateTime<-setNames(dateTime,"DateTime")
+k<-k[,!(names(k) %in% c("Date","Time"))]
+k<-cbind(dateTime,k)
+k$dateTime<-as.POSIXct(dateTime)
+
+#PLOT 3
+with(k, {
+  plot(Sub_metering_1~dateTime, type="l",
+       ylab="Global Active Power (kilowatts)", xlab="")
+  lines(Sub_metering_2~dateTime,col='Red')
+  lines(Sub_metering_3~dateTime,col='Blue')
+})
+legend("topright", col=c("black", "red", "blue"), lwd=c(1,1,1), 
+       c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+
+dev.copy(png, file="plot3.png", height=480, width=480)
+dev.off()
